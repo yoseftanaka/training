@@ -40,8 +40,14 @@ public class Task implements TaskComponent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return Objects.equals(taskChildren, task.taskChildren) &&
+        return level == task.level &&
+                Objects.equals(taskChildren, task.taskChildren) &&
                 Objects.equals(taskName, task.taskName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(level, taskChildren, taskName);
     }
 
     @Override
@@ -49,11 +55,6 @@ public class Task implements TaskComponent {
         return "Task{" +
                 "taskName='" + taskName + '\'' +
                 '}';
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(taskChildren, taskName);
     }
 
     @Override
