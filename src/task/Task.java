@@ -1,38 +1,67 @@
 package task;
 
+import task.state.TaskIdleState;
+import task.state.TaskState;
+
 import java.util.Objects;
 import java.util.Vector;
 
-public class Task implements TaskComponent {
+public class Task implements TaskComponent{
 
     private int level=0;
     private Vector<TaskComponent> taskChildren = new Vector<TaskComponent>();
     private String taskName;
+    private TaskState taskState;
+    private TaskCollection taskCollection = TaskCollection.getInstance();
 
     public Task(String taskName) {
         this.taskName = taskName;
+        this.taskState = new TaskIdleState();
     }
 
     @Override
     public void add(TaskComponent taskComponent) {
-        if(this.level!=2) taskChildren.add(taskComponent);
-        taskComponent.setLevel(this.level+1);
+        if(this.level!=2) {
+            taskChildren.add(taskComponent);
+            taskComponent.setLevel(this.level+1);
+        }
+    }
+
+    public void addTaskToCollection(){
+        taskCollection.addTask(this);
     }
 
     @Override
-    public void start(TaskComponent taskComponent) {
+    public void start() {
         //jalankan timer
+        taskCollection.disableAllTaskButOne(this);
     }
 
     @Override
-    public void done(TaskComponent taskComponent) {
+    public void done() {
         //jalankan timer
-        taskChildren.remove(taskComponent);
+        for(TaskComponent task:taskChildren){
+            for(TaskComponent tasks:task.getTaskChildren()){
+                taskCollection.removeTask((Task)tasks);
+            }
+            task.getTaskChildren().clear();
+            taskCollection.removeTask((Task)task);
+        }
+        taskCollection.removeTask(this);
+        taskCollection.idleAllTask();
     }
 
     @Override
-    public void remove(TaskComponent taskComponent) {
-        taskChildren.remove(taskComponent);
+    public void remove() {
+        for(TaskComponent task:taskChildren){
+            for(TaskComponent tasks:task.getTaskChildren()){
+                taskCollection.removeTask((Task)tasks);
+            }
+            task.getTaskChildren().clear();
+            taskCollection.removeTask((Task)task);
+        }
+        taskCollection.removeTask(this);
+        taskCollection.idleAllTask();
     }
 
     @Override
@@ -53,7 +82,9 @@ public class Task implements TaskComponent {
     @Override
     public String toString() {
         return "Task{" +
-                "taskName='" + taskName + '\'' +
+                "level=" + level +
+                ", taskName='" + taskName + '\'' +
+                ", taskState=" + taskState +
                 '}';
     }
 
@@ -73,5 +104,29 @@ public class Task implements TaskComponent {
 
     public void setTaskName(String taskName) {
         this.taskName = taskName;
+    }
+
+    public void setTaskState(TaskState taskState){
+        this.taskState = taskState;
+    }
+
+    public TaskState getTaskState(){
+        return this.taskState;
+    }
+
+    public Vector<TaskComponent> getTaskChildren() {
+        return taskChildren;
+    }
+
+    public void setTaskChildren(Vector<TaskComponent> taskChildren) {
+        this.taskChildren = taskChildren;
+    }
+
+    public TaskCollection getTaskCollection() {
+        return taskCollection;
+    }
+
+    public void setTaskCollection(TaskCollection taskCollection) {
+        this.taskCollection = taskCollection;
     }
 }
