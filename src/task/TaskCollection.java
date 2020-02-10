@@ -1,8 +1,8 @@
 package task;
 
-import task.state.TaskActiveState;
-import task.state.TaskDisalbleState;
-import task.state.TaskIdleState;
+import task.state.DisableState;
+import task.state.IdleState;
+import task.state.WorkState;
 
 import java.util.Objects;
 import java.util.Vector;
@@ -30,14 +30,14 @@ public class TaskCollection {
 
     public void disableAllTaskButOne(Task task){
         for(Task innerTask:taskList){
-            if(!task.equals(innerTask)) innerTask.setTaskState(new TaskDisalbleState());
+//            if(!task.equals(innerTask)) innerTask.setTaskState(new DisableState());
         }
-        task.setTaskState(new TaskActiveState());
+//        task.setTaskState(new WorkState());
     }
 
     public void idleAllTask(){
         for(Task innerTask:taskList){
-            innerTask.setTaskState(new TaskIdleState());
+//            innerTask.setTaskState(new IdleState());
         }
     }
 

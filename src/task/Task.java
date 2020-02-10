@@ -1,6 +1,6 @@
 package task;
 
-import task.state.TaskIdleState;
+import task.state.IdleState;
 import task.state.TaskState;
 
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class Task implements TaskComponent{
 
     public Task(String taskName) {
         this.taskName = taskName;
-        this.taskState = new TaskIdleState();
+//        this.taskState = new IdleState(this);
     }
 
     @Override
